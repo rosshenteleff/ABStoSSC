@@ -1,0 +1,75 @@
+============================================================
+Deployment   : ADPCon
+Current time : 12/14/2018 2:04:58 PM
+Start at     : 12/14/2018 2:04:00 PM
+Comment:
+
+------------------------------------------------------------
+Profile interval      (s) : 10
+Number of cells           : 20
+Cell size             (m) : 0.20
+Average interval      (s) : 10
+Blanking distance     (m) : 0.20
+Number of wave samples    : N/A
+Wave interval         (s) : N/A
+Wave sampling rate   (Hz) : N/A
+Wave cell size        (m) : N/A
+Measurement load      (%) : 100
+Power level               : HIGH
+Compass upd. rate     (s) : 10
+Coordinate System         : XYZ
+Speed of sound      (m/s) : MEASURED
+Salinity            (ppt) : 30
+File wrapping             : OFF
+------------------------------------------------------------
+Assumed duration   (days) : 3.0
+Battery utilization   (%) : 103.0
+Battery level         (V) : 10.7
+Recorder size        (MB) : 361
+Recorder free space  (MB) : 357.387
+Memory required      (MB) : 5.2
+Vertical vel. prec (cm/s) : 1.6
+Horizon. vel. prec (cm/s) : 4.9
+------------------------------------------------------------
+AquaPro Version 1.27
+Copyright (C) 1997-2005 Nortek AS
+============================================================
+
+
+
+============================================================
+Deployment   : ADPCon
+Current time : 12/21/2018 11:41:07 AM
+Start at     : 12/21/2018 6:00:00 PM
+Comment:
+adcp con dec21 abt channel
+------------------------------------------------------------
+Profile interval      (s) : 10
+Number of cells           : 20
+Cell size             (m) : 0.20
+Average interval      (s) : 10
+Blanking distance     (m) : 0.20
+Number of wave samples    : N/A
+Wave interval         (s) : N/A
+Wave sampling rate   (Hz) : N/A
+Wave cell size        (m) : N/A
+Measurement load      (%) : 100
+Power level               : HIGH
+Compass upd. rate     (s) : 10
+Coordinate System         : XYZ
+Speed of sound      (m/s) : MEASURED
+Salinity            (ppt) : 30
+File wrapping             : OFF
+------------------------------------------------------------
+Assumed duration   (days) : 3.0
+Battery utilization   (%) : 103.0
+Battery level         (V) : 12.0
+Recorder size        (MB) : 361
+Recorder free space  (MB) : 361.000
+Memory required      (MB) : 5.2
+Vertical vel. prec (cm/s) : 1.6
+Horizon. vel. prec (cm/s) : 4.9
+------------------------------------------------------------
+AquaPro Version 1.27
+Copyright (C) 1997-2005 Nortek AS
+============================================================

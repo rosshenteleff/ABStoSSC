@@ -1,0 +1,181 @@
+[C:\Documents and Settings\s5684917.DVP-NOTEBOOK\My Documents\Aquadopp\Converse_December2018\ADPCon01.prf]
+---------------------------------------------------------------------
+Number of measurements                18108
+Number of checksum errors             0
+Time of first measurement             12/21/2018 6:00:00 PM
+Time of last measurement              12/23/2018 8:17:50 PM
+
+User setup
+---------------------------------------------------------------------
+Profile interval                      10 sec
+Number of cells                       20
+Cell size                             20 cm
+Average interval                      10 sec
+Measurement load                      100 %
+Transmit pulse length                 0.22 m
+Blanking distance                     0.20 m
+Compass update rate                   10 sec
+Distance measurements                 DISABLED
+Wave measurements                     DISABLED
+Wave - Powerlevel                     LOW
+Wave - Interval                       60 sec
+Wave - Number of samples              1024
+Wave - Sampling rate                  1 Hz
+Wave - Cell size                      1.00 m
+Analog input 1                        NONE
+Analog input 2                        NONE
+Powerlevel                            HIGH
+Coordinate system                     XYZ
+Sound speed                           MEASURED
+Salinity                              30.0 ppt
+Distance between pings                10.00 m
+Number of beams                       3
+Number of pings per burst             23
+Software version                      1.27
+Deployment name                       ADPCon
+Wrap mode                             OFF
+Deployment time                       12/21/2018 6:00:00 PM
+Comments                              adcp con dec21 abt channel
+System1                               37
+System2                               20
+System3                               10
+System4                               437
+System5                               512
+System9                               2
+System10                              96
+System11                              0
+System12                              0
+System13                              0
+System14                              10
+System16                              20
+System17                              2363
+System22                              60
+System28                              1
+System29                              1
+System30                              24
+System31                              15486 15514 15542 15570
+System32                              0
+System33                              0
+System34                              167
+System35                              53
+System36                              10709
+System38                              0
+System39                              0
+System40                              0
+System41                              0
+System42                              0
+System43                              0
+System44                              0
+System45                              6
+Start command                         3
+CRC download                          ON
+
+Hardware configuration
+---------------------------------------------------------------------
+Serial number                         AQD 5159      
+Internal code version                 0
+Revision number                       1
+Recorder size                         361 MByte
+Firmware version                      3.39
+Velocity range                        HIGH
+
+Head configuration
+---------------------------------------------------------------------
+Pressure sensor                       YES
+Compass                               YES
+Tilt sensor                           YES
+System 1                              1
+System 1                              0
+Head frequency                        2000 kHz
+Serial number                         ASP 3040
+Transformation matrix                 6461 -3232 -3232
+                                      0 -5596 5596
+                                      1506 1506 1506
+Pressure sensor calibration           0 0 3026 15534
+Number of beams                       3
+System5                               25 25 25 0
+System7                               -29366 -2279 13012 390
+                                      -27408 -802 12994 0
+System8                               1 0 0
+                                      0 -1 0
+                                      0 0 -1
+System9                               1 0 0
+                                      0 1 0
+                                      0 0 1
+System10                              0 1 -1 0
+System11                              0 1 1 0
+System13                              1481 259 7128 10573
+System14                              -22071 -599 11881 100
+                                      -21289 -1024 11963 40
+System15                              32767 0 -639 0
+                                      32531 -69 0 0
+                                      32767 23 -30 0
+                                      0 0 0 0
+System16                              0 0 0 0
+System17                              4550
+System18                              3600
+System19                              3600
+System20                              10000
+
+Data file format
+---------------------------------------------------------------------
+[C:\Documents and Settings\s5684917.DVP-NOTEBOOK\My Documents\Aquadopp\Converse_December2018\ADPCon01.v1]
+ 1   Velocity Cell 1 (Beam1|X|East)   (m/s)
+ 2   Velocity Cell 2 (Beam1|X|East)   (m/s)
+     .
+     .
+ n   Velocity Cell n (Beam1|X|East)   (m/s)
+---------------------------------------------------------------------
+[C:\Documents and Settings\s5684917.DVP-NOTEBOOK\My Documents\Aquadopp\Converse_December2018\ADPCon01.v2]
+ 1   Velocity Cell 1 (Beam2|Y|North)  (m/s)
+ 2   Velocity Cell 2 (Beam2|Y|North)  (m/s)
+     .
+     .
+ n   Velocity Cell n (Beam2|Y|North)  (m/s)
+---------------------------------------------------------------------
+[C:\Documents and Settings\s5684917.DVP-NOTEBOOK\My Documents\Aquadopp\Converse_December2018\ADPCon01.v3]
+ 1   Velocity Cell 1 (Beam3|Z|Up)     (m/s)
+ 2   Velocity Cell 2 (Beam3|Z|Up)     (m/s)
+     .
+     .
+ n   Velocity Cell n (Beam3|Z|Up)     (m/s)
+---------------------------------------------------------------------
+[C:\Documents and Settings\s5684917.DVP-NOTEBOOK\My Documents\Aquadopp\Converse_December2018\ADPCon01.a1]
+ 1   Amplitude Cell 1 (Beam1)         (counts)
+ 2   Amplitude Cell 2 (Beam1)         (counts)
+     .
+     .
+ n   Amplitude Cell n (Beam1)         (counts)
+---------------------------------------------------------------------
+[C:\Documents and Settings\s5684917.DVP-NOTEBOOK\My Documents\Aquadopp\Converse_December2018\ADPCon01.a2]
+ 1   Amplitude Cell 1 (Beam2)         (counts)
+ 2   Amplitude Cell 2 (Beam2)         (counts)
+     .
+     .
+ n   Amplitude Cell n (Beam2)         (counts)
+---------------------------------------------------------------------
+[C:\Documents and Settings\s5684917.DVP-NOTEBOOK\My Documents\Aquadopp\Converse_December2018\ADPCon01.a3]
+ 1   Amplitude Cell 1 (Beam3)         (counts)
+ 2   Amplitude Cell 2 (Beam3)         (counts)
+     .
+     .
+ n   Amplitude Cell n (Beam3)         (counts)
+---------------------------------------------------------------------
+[C:\Documents and Settings\s5684917.DVP-NOTEBOOK\My Documents\Aquadopp\Converse_December2018\ADPCon01.sen]
+ 1   Month                            (1-12)
+ 2   Day                              (1-31)
+ 3   Year
+ 4   Hour                             (0-23)
+ 5   Minute                           (0-59)
+ 6   Second                           (0-59)
+ 7   Error code
+ 8   Status code
+ 9   Battery voltage                  (V)
+10   Soundspeed                       (m/s)
+11   Heading                          (degrees)
+12   Pitch                            (degrees)
+13   Roll                             (degrees)
+14   Pressure                         (dbar)
+15   Temperature                      (degrees C)
+16   Analog input 1
+17   Analog input 2
