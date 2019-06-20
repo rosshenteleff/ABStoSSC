@@ -8,6 +8,7 @@ library(plot3D)
 
 install.packages("plotly")
 library(plotly)
+library(RColorBrewer)
 
 install.packages("animation")
 library(animation)
@@ -15,9 +16,12 @@ library(animation)
 install.packages("readr")
 library(readr)
 
-install.packages("purrr")
-library(purrr)
-
+install.packages("purrr")                    
+library(purrr)                                          ##Note: This seems to fail sometimes. If the console reads "Error in library(purrr) : there is no package called ‘purrr’".
+                                                        ##If this happens, go to C:\Users\s2448519\Documents\R\R-3.6.0\library (change user as required) and delete the purrr folder, and rerun the program.
+install.packages("dplyr")
+library(dplyr)
+                                                        
 ##Bringing the data into the program...
 
 ##Amplitude Data:
@@ -41,35 +45,63 @@ Freq = 2                 ##(MHz)
 Depth <- matrix(Converse_SEN[,14], nrow = nrow(Converse_SEN))
 Depth_Matrix <- matrix(Depth, nrow = nrow(Depth), ncol = ncol(Converse_A1), byrow = FALSE)
 
-##Note: Although the units of Col. 14 in Converse_SEN are actually "dbar", this works out to be equal to the depth of seawater above the sensor.
+##Note: Although the units of Col. 14 in Converse_SEN are actually dbar, this works out to be equal to the depth of seawater above the sensor in m.
 ##Note: Depth never goes above 2.879m, and frequently goes below blanking distance - cannot measure SSC in air or within blanking distance.
 
 
-##Filtering out depths below blanking distance...
+##Calculating SNR per beam...
+
+SNR_Matrix1 <- matrix(0, nrow = nrow(Converse_A1), ncol = ncol(Converse_A1))
 
 for(row in 1:nrow(Converse_A1)){
   for(col in 1:ncol(Converse_A1)){
-    if(Depth_Matrix[row,col] < Blanking_Distance){
-      Converse_A1[row,col] = NULL
+    SNR_Matrix1[row,col] = 20 * log(Converse_A1[row,col] / 13)   
+  }
+}
+
+SNR_Matrix2 <- matrix(0, nrow = nrow(Converse_A2), ncol = ncol(Converse_A2))
+
+for(row in 1:nrow(Converse_A2)){
+  for(col in 1:ncol(Converse_A2)){
+    SNR_Matrix2[row,col] = 20 * log(Converse_A2[row,col] / 13)   
+  }
+}
+
+SNR_Matrix3 <- matrix(0, nrow = nrow(Converse_A3), ncol = ncol(Converse_A3))
+
+for(row in 1:nrow(Converse_A3)){
+  for(col in 1:ncol(Converse_A3)){
+    SNR_Matrix3[row,col] = 20 * log(Converse_A3[row,col] / 13)   
+  }
+}
+
+
+##Filtering out data with SNR < 3dB...
+
+for(row in 1:nrow(Converse_A1)){
+  for(col in 1:ncol(Converse_A1)){
+    if(SNR_Matrix1[row,col] < 3){
+      Converse_A1[row,col] = 0
     }
   }
 }
 
 for(row in 1:nrow(Converse_A2)){
   for(col in 1:ncol(Converse_A2)){
-    if(Depth_Matrix[row,col] < Blanking_Distance){
-      Converse_A2[row,col] = NULL
+    if(SNR_Matrix2[row,col] < 3){
+      Converse_A3[row,col] = 0
     }
   }
 }
 
 for(row in 1:nrow(Converse_A3)){
   for(col in 1:ncol(Converse_A3)){
-    if(Depth_Matrix[row,col] < Blanking_Distance){
-      Converse_A3[row,col] = NULL
+    if(SNR_Matrix3[row,col] < 3){
+      Converse_A3[row,col] = 0
     }
   }
 }
+
 
 ##Extracting time data from SEN file...
 
@@ -87,10 +119,7 @@ Date_comb <- unite(Date[1:3], comb_date, sep = "-", remove = TRUE)
 Time_comb <- unite(Time[1:3], comb_time, sep = ":", remove = TRUE)
 
 Date_Time <- as.data.frame(cbind(Date_comb, Time_comb))
-
 Date_Time_comb <- unite(Date_Time[1:2], comb_date_time, sep = " ", remove = TRUE)
-
-Date_Time_comb_f <- map_df(seq_len(60), ~Date_Time_comb)
 
 
 ##Calculating range of each bin...
@@ -122,17 +151,6 @@ z3 = Range_Vector * cos(25)
 ##Note: Using coordinate system as described on p. 23 of manual.
 
 
-##Filtering out measurements above the water surface...
-
-for(row in 1:nrow(Range_Matrix)){
-  for(col in 1:ncol(Range_Matrix)){
-    if(Range_Matrix[row,col] > Depth_Matrix[row,col]){
-      Range_Matrix[row,col] = "NA"
-    }
-  }
-}
-
-
 ##Calculating general spread of acoustic beam...
 
 Acoustic_Spread = 20*log(Range_Vector)
@@ -148,6 +166,18 @@ Water_Spread = 2 * Water_Absorption * Range_Vector
 WS_Matrix = matrix(Water_Spread, nrow = nrow(Converse_A1), ncol = ncol(Converse_A1), byrow = TRUE)
 
 ##Note: This is for Freq between 1.5 and 3 MHz, and Salinity between 0 and 35 ppt - if otherwise consult table @ https://www.nortekgroup.com/assets/documents/Sediments.pdf and change values as needed.
+
+
+##Filtering out data for which amplitude = 0...
+
+for(row in 1:nrow(Converse_A1)){
+  for(col in 1:ncol(Converse_A1)){
+    if(Converse_A1[row,col] == 0){
+      AS_Matrix[row,col] = 0
+      WS_Matrix[row,col] = 0
+    }
+  }
+}
 
 
 ##Calculating fluid-corrected backscatter matrices...
@@ -189,40 +219,34 @@ for(row in 1:nrow(Converse_FCB3)){
 
 ##Calculating particle attenuation from slopes...
 
-##map() method attempt:
-alphaP_Matrix1 <- matrix(map(Slope_Matrix1, ~Slope_Matrix1 * 0.5))
-alphaP_Matrix2 <- matrix(map(Slope_Matrix2, ~Slope_Matrix2 * 0.5))
-alphaP_Matrix3 <- matrix(map(Slope_Matrix3, ~Slope_Matrix3 * 0.5))
+alphaP_1 = mean(Slope_Matrix1) * -0.5
 
-##for() method which works
-alphaP_Matrix1 <- matrix(0, nrow = nrow(Slope_Matrix1))
+alphaP_2  = mean(Slope_Matrix2) * -0.5
 
-for(row in 1:nrow(Slope_Matrix1)){
-  alphaP_Matrix1[row,] = 0.5 * Slope_Matrix1[row,]
-}
-
-alphaP_Matrix2 <- matrix(0, nrow = nrow(Slope_Matrix2))
-
-for(row in 1:nrow(Slope_Matrix2)){
-  alphaP_Matrix2[row,] = 0.5 * Slope_Matrix2[row,]
-}
-
-alphaP_Matrix3 <- matrix(0, nrow = nrow(Slope_Matrix3))
-
-for(row in 1:nrow(Slope_Matrix3)){
-  alphaP_Matrix3[row,] = 0.5 * Slope_Matrix3[row,]
-}
+alphaP_3 = mean(Slope_Matrix3) * -0.5
 
 ##Note: This calculation is done following Wright et al.'s 2010 paper from the 2nd Joint Federal Interagency Conference, "Disciminating silt-and-clay from suspended sand in rivers using side-facing acoustic profilers".
-##This is as follows: alphaP = 0.5*(dFCB/dr).
-
+##This is as follows: alphaP = -0.5*(dFCB/dr).
 
 ##Calculating particle spread matrices...
 
-PS_Matrix1 = matrix(alphaP_Matrix1, nrow = nrow(alphaP_Matrix1), ncol = ncol(Converse_FCB1)) * matrix(Range_Vector, nrow = nrow(alphaP_Matrix1), ncol = ncol(Converse_FCB1)) * 20
-PS_Matrix2 = matrix(alphaP_Matrix2, nrow = nrow(alphaP_Matrix2), ncol = ncol(Converse_FCB2)) * matrix(Range_Vector, nrow = nrow(alphaP_Matrix2), ncol = ncol(Converse_FCB2)) * 20
-PS_Matrix3 = matrix(alphaP_Matrix3, nrow = nrow(alphaP_Matrix3), ncol = ncol(Converse_FCB3)) * matrix(Range_Vector, nrow = nrow(alphaP_Matrix3), ncol = ncol(Converse_FCB3)) * 20
+PS_Matrix1 = alphaP_1 * matrix(Range_Vector, nrow = nrow(Converse_FCB1), ncol = ncol(Converse_FCB1)) * 20
+PS_Matrix2 = alphaP_2 * matrix(Range_Vector, nrow = nrow(Converse_FCB2), ncol = ncol(Converse_FCB2)) * 20
+PS_Matrix3 = alphaP_3 * matrix(Range_Vector, nrow = nrow(Converse_FCB3), ncol = ncol(Converse_FCB3)) * 20
 
+
+##Filtering out data for which amplitude = 0...
+
+for(row in 1:nrow(PS_Matrix1)){
+  for(col in 1:ncol(PS_Matrix1)){
+    if(Converse_A1[row,col] == 0){
+      PS_Matrix1[row,col] = 0
+      PS_Matrix2[row,col] = 0
+      PS_Matrix3[row,col] = 0
+
+    }
+  }
+}
 
 ##Calculating final backscatter matrices...
 
@@ -237,37 +261,34 @@ SSC_Matrix1 <- matrix(0, nrow = nrow(BS_Matrix1), ncol = ncol(BS_Matrix1))
 
 for(row in 1:nrow(SSC_Matrix1)){
   for(col in 1:ncol(SSC_Matrix1)){
-    SSC_Matrix1[row,col] <- 10^((BS_Matrix1[row,col]) * 0.006049199)
-    if(Range_Matrix[row,col] == "NA"){
-      SSC_Matrix1[row,col] = 0
-    }
+    SSC_Matrix1[row,col] <- 10^((BS_Matrix1[row,col]) * 0.02540812244531)
   }
 }
+
+max(SSC_Matrix1)
 
 SSC_Matrix2 <- matrix(0, nrow = nrow(BS_Matrix2), ncol = ncol(BS_Matrix2))
 
 for(row in 1:nrow(SSC_Matrix2)){
   for(col in 1:ncol(SSC_Matrix2)){
-    SSC_Matrix2[row,col] <- 10^((BS_Matrix2[row,col]) * 0.006049199)
-    if(Range_Matrix[row,col] == "NA"){
-      SSC_Matrix2[row,col] = 0
-    }
+    SSC_Matrix2[row,col] <- 10^((BS_Matrix2[row,col]) * 0.02540812244531)
   }
 }
+
+max(SSC_Matrix2)
 
 SSC_Matrix3 <- matrix(0, nrow = nrow(BS_Matrix3), ncol = ncol(BS_Matrix3))
 
 for(row in 1:nrow(SSC_Matrix3)){
   for(col in 1:ncol(SSC_Matrix3)){
-    SSC_Matrix3[row,col] <- 10^((BS_Matrix3[row,col]) * 0.006049199)
-    if(Range_Matrix[row,col] == "NA"){
-      SSC_Matrix3[row,col] = 0
-    }
+    SSC_Matrix3[row,col] <- 10^((BS_Matrix3[row,col]) * 0.02540812244531)
   }
 }
 
+max(SSC_Matrix3)
+
 ##Note: BS to SSC calculation done according to J.W. Gartner's 2004 article in Marine Geology 211, "Estimating suspended solids concentrations from backscatter intensity measured by acoustic Doppler current profiler in San Francisco Bay, California" (p. 181)
-##This is as follows: SSC = 10^(a*BS + b), where a = 0.006049199, from linear modelling assuming the estimated and measured maxima correspond, and b = 0, as actual RB values were used.
+##This is as follows: SSC = 10^(a*BS + b), where a = 0.02540812244531, from linear modelling assuming the estimated and measured maxima correspond, and b = 0, as actual BS values were used.
 
 
 ##Creating x-y-z matrices...
@@ -291,13 +312,25 @@ X_Matrix <- cbind(X_Matrix1, X_Matrix2, X_Matrix3)
 Y_Matrix <- cbind(Y_Matrix1, Y_Matrix2, Y_Matrix3)
 Z_Matrix <- cbind(Z_Matrix1, Z_Matrix2, Z_Matrix3)
 
-SSC_Matrix <- cbind(SSC_Matrix1, SSC_Matrix2, SSC_Matrix3)
+SSC_Matrix <- matrix(0, nrow = nrow(SSC_Matrix1), ncol = ncol(SSC_Matrix1))
+
+for(row in 1:nrow(SSC_Matrix)){
+  for(col in 1:ncol(SSC_Matrix)){
+    SSC_Matrix[row,col] = mean(SSC_Matrix1[row,col], SSC_Matrix2[row,col], SSC_Matrix3[row,col])
+  }
+}
 
 SSC_df <- as.data.frame(SSC_Matrix)
+Z_df <- as.data.frame(Z_Matrix1)
 SSC_df_long <- gather(SSC_df, value = "SSC", key = "bin")
-SSC_df_date_long <- cbind(Date_Time_comb_f, SSC_df_long)
+Z_df_long <- gather(Z_df, value = "Z", key = "Z")
+SSC_df_date_long <- cbind(Date_Time_comb, SSC_df_long, Z_df_long[,2])
 
 
-##Creating plots...                      [How are the three columns turned into a single column by STORM?]
+##Creating plots...
 
+palette <- colorRampPalette(c("darkblue", "blue", "lightblue1", "green","yellow", "red", "darkred"))
 
+SSC_plot = plot_ly(data = SSC_df_date_long, x = ~comb_date_time, y = ~Z_df_long[,2], color = ~SSC, colors = palette, type = 'histogram')
+
+SSC_plot
