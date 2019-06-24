@@ -55,7 +55,7 @@ SNR_Matrix1 <- matrix(0, nrow = nrow(Converse_A1), ncol = ncol(Converse_A1))
 
 for(row in 1:nrow(Converse_A1)){
   for(col in 1:ncol(Converse_A1)){
-    SNR_Matrix1[row,col] = 20 * log(Converse_A1[row,col] / 13)   
+    SNR_Matrix1[row,col] = 20 * log(Converse_A1[row,col] / 13)            ##13 = noise floor, change as needed.
   }
 }
 
@@ -326,11 +326,13 @@ SSC_df_long <- gather(SSC_df, value = "SSC", key = "bin")
 Z_df_long <- gather(Z_df, value = "Z", key = "Z")
 SSC_df_date_long <- cbind(Date_Time_comb, SSC_df_long, Z_df_long[,2])
 
+colnames(SSC_df_date_long) <- c("Date", "bin", "SSC", "Z")
+
 
 ##Creating plots...
 
 palette <- colorRampPalette(c("darkblue", "blue", "lightblue1", "green","yellow", "red", "darkred"))
 
-SSC_plot = plot_ly(data = SSC_df_date_long, x = ~comb_date_time, y = ~Z_df_long[,2], color = ~SSC, colors = palette, type = 'histogram')
+SSC_plot = plot_ly(data = SSC_df_date_long, x = ~Date, y = ~Z, color = ~SSC, colors = palette, type = 'histogram')
 
 SSC_plot
