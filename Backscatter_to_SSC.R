@@ -33,11 +33,13 @@ Converse_A3 <- read.table("C:/Users/s2448519/Downloads/NS044_December2018/NS044_
 Converse_SEN <- read.table("C:/Users/s2448519/Downloads/NS044_December2018/NS044_December2018/ADCP/ADPCon01.sen", header = FALSE, nrows = -1)
 
 
+##Settings of instrument, change as needed.
 Blanking_Distance = 0.2  ##(m)
 Bin_Size = 0.2           ##(m)
 Bin_Number = 20          ##(count)
 Salinity = 30            ##(ppt)
 Freq = 2                 ##(MHz)
+Noise_Floor = 20         ##(dB)
 
 
 ##Extracting depth values from SEN file...
@@ -55,7 +57,7 @@ SNR_Matrix1 <- matrix(0, nrow = nrow(Converse_A1), ncol = ncol(Converse_A1))
 
 for(row in 1:nrow(Converse_A1)){
   for(col in 1:ncol(Converse_A1)){
-    SNR_Matrix1[row,col] = 20 * log(Converse_A1[row,col] / 13)            ##13 = noise floor, change as needed.
+    SNR_Matrix1[row,col] = 20 * log(Converse_A1[row,col] / Noise_Floor)
   }
 }
 
@@ -63,7 +65,7 @@ SNR_Matrix2 <- matrix(0, nrow = nrow(Converse_A2), ncol = ncol(Converse_A2))
 
 for(row in 1:nrow(Converse_A2)){
   for(col in 1:ncol(Converse_A2)){
-    SNR_Matrix2[row,col] = 20 * log(Converse_A2[row,col] / 13)   
+    SNR_Matrix2[row,col] = 20 * log(Converse_A2[row,col] / Noise_Floor)   
   }
 }
 
@@ -71,7 +73,7 @@ SNR_Matrix3 <- matrix(0, nrow = nrow(Converse_A3), ncol = ncol(Converse_A3))
 
 for(row in 1:nrow(Converse_A3)){
   for(col in 1:ncol(Converse_A3)){
-    SNR_Matrix3[row,col] = 20 * log(Converse_A3[row,col] / 13)   
+    SNR_Matrix3[row,col] = 20 * log(Converse_A3[row,col] / Noise_Floor)   
   }
 }
 
@@ -220,9 +222,7 @@ for(row in 1:nrow(Converse_FCB3)){
 ##Calculating particle attenuation from slopes...
 
 alphaP_1 = mean(Slope_Matrix1) * -0.5
-
-alphaP_2  = mean(Slope_Matrix2) * -0.5
-
+alphaP_2 = mean(Slope_Matrix2) * -0.5
 alphaP_3 = mean(Slope_Matrix3) * -0.5
 
 ##Note: This calculation is done following Wright et al.'s 2010 paper from the 2nd Joint Federal Interagency Conference, "Disciminating silt-and-clay from suspended sand in rivers using side-facing acoustic profilers".
@@ -243,7 +243,6 @@ for(row in 1:nrow(PS_Matrix1)){
       PS_Matrix1[row,col] = 0
       PS_Matrix2[row,col] = 0
       PS_Matrix3[row,col] = 0
-
     }
   }
 }
@@ -261,7 +260,7 @@ SSC_Matrix1 <- matrix(0, nrow = nrow(BS_Matrix1), ncol = ncol(BS_Matrix1))
 
 for(row in 1:nrow(SSC_Matrix1)){
   for(col in 1:ncol(SSC_Matrix1)){
-    SSC_Matrix1[row,col] <- 10^((BS_Matrix1[row,col]) * 0.02540812244531)
+    SSC_Matrix1[row,col] <- 10^((BS_Matrix1[row,col]) * 0.02109199)
   }
 }
 
@@ -271,7 +270,7 @@ SSC_Matrix2 <- matrix(0, nrow = nrow(BS_Matrix2), ncol = ncol(BS_Matrix2))
 
 for(row in 1:nrow(SSC_Matrix2)){
   for(col in 1:ncol(SSC_Matrix2)){
-    SSC_Matrix2[row,col] <- 10^((BS_Matrix2[row,col]) * 0.02540812244531)
+    SSC_Matrix2[row,col] <- 10^((BS_Matrix2[row,col]) * 0.02109199)
   }
 }
 
@@ -281,14 +280,14 @@ SSC_Matrix3 <- matrix(0, nrow = nrow(BS_Matrix3), ncol = ncol(BS_Matrix3))
 
 for(row in 1:nrow(SSC_Matrix3)){
   for(col in 1:ncol(SSC_Matrix3)){
-    SSC_Matrix3[row,col] <- 10^((BS_Matrix3[row,col]) * 0.02540812244531)
+    SSC_Matrix3[row,col] <- 10^((BS_Matrix3[row,col]) * 0.02109199)
   }
 }
 
 max(SSC_Matrix3)
 
 ##Note: BS to SSC calculation done according to J.W. Gartner's 2004 article in Marine Geology 211, "Estimating suspended solids concentrations from backscatter intensity measured by acoustic Doppler current profiler in San Francisco Bay, California" (p. 181)
-##This is as follows: SSC = 10^(a*BS + b), where a = 0.02540812244531, from linear modelling assuming the estimated and measured maxima correspond, and b = 0, as actual BS values were used.
+##This is as follows: SSC = 10^(a*BS + b), where a = 0.02109199, from linear modelling assuming the estimated and measured maxima correspond, and b = 0, as actual BS values were used.
 
 
 ##Creating x-y-z matrices...
@@ -331,8 +330,10 @@ colnames(SSC_df_date_long) <- c("Date", "bin", "SSC", "Z")
 
 ##Creating plots...
 
-palette <- colorRampPalette(c("darkblue", "blue", "lightblue1", "green","yellow", "red", "darkred"))
+palette <- colorRampPalette(c("black", "blue", "lightblue1", "green", "yellow", "red", "darkred"))
 
-SSC_plot = plot_ly(data = SSC_df_date_long, x = ~Date, y = ~Z, color = ~SSC, colors = palette, type = 'histogram')
+SSC_plot = plot_ly(data = SSC_df_date_long, x = ~Date, y = ~Z, color = ~SSC, colors = palette(nrow(SSC_df_date_long)), type = 'histogram')
 
 SSC_plot
+
+
