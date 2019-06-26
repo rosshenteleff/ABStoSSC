@@ -39,7 +39,7 @@ Bin_Size = 0.2           ##(m)
 Bin_Number = 20          ##(count)
 Salinity = 30            ##(ppt)
 Freq = 2                 ##(MHz)
-Noise_Floor = 20         ##(dB)
+Noise_Floor = 13         ##(counts)
 
 
 ##Extracting depth values from SEN file...
@@ -260,7 +260,7 @@ SSC_Matrix1 <- matrix(0, nrow = nrow(BS_Matrix1), ncol = ncol(BS_Matrix1))
 
 for(row in 1:nrow(SSC_Matrix1)){
   for(col in 1:ncol(SSC_Matrix1)){
-    SSC_Matrix1[row,col] <- 10^((BS_Matrix1[row,col]) * 0.02109199)
+    SSC_Matrix1[row,col] <- 10^((BS_Matrix1[row,col]) * 0.025408151)
   }
 }
 
@@ -270,7 +270,7 @@ SSC_Matrix2 <- matrix(0, nrow = nrow(BS_Matrix2), ncol = ncol(BS_Matrix2))
 
 for(row in 1:nrow(SSC_Matrix2)){
   for(col in 1:ncol(SSC_Matrix2)){
-    SSC_Matrix2[row,col] <- 10^((BS_Matrix2[row,col]) * 0.02109199)
+    SSC_Matrix2[row,col] <- 10^((BS_Matrix2[row,col]) * 0.025408151)
   }
 }
 
@@ -280,14 +280,14 @@ SSC_Matrix3 <- matrix(0, nrow = nrow(BS_Matrix3), ncol = ncol(BS_Matrix3))
 
 for(row in 1:nrow(SSC_Matrix3)){
   for(col in 1:ncol(SSC_Matrix3)){
-    SSC_Matrix3[row,col] <- 10^((BS_Matrix3[row,col]) * 0.02109199)
+    SSC_Matrix3[row,col] <- 10^((BS_Matrix3[row,col]) * 0.025408151)
   }
 }
 
 max(SSC_Matrix3)
 
 ##Note: BS to SSC calculation done according to J.W. Gartner's 2004 article in Marine Geology 211, "Estimating suspended solids concentrations from backscatter intensity measured by acoustic Doppler current profiler in San Francisco Bay, California" (p. 181)
-##This is as follows: SSC = 10^(a*BS + b), where a = 0.02109199, from linear modelling assuming the estimated and measured maxima correspond, and b = 0, as actual BS values were used.
+##This is as follows: SSC = 10^(a*BS + b), where a = 0.025408151, from linear modelling assuming the estimated and measured maxima correspond, and b = 0, as actual BS values were used.
 
 
 ##Creating x-y-z matrices...
@@ -323,17 +323,20 @@ SSC_df <- as.data.frame(SSC_Matrix)
 Z_df <- as.data.frame(Z_Matrix1)
 SSC_df_long <- gather(SSC_df, value = "SSC", key = "bin")
 Z_df_long <- gather(Z_df, value = "Z", key = "Z")
-SSC_df_date_long <- cbind(Date_Time_comb, SSC_df_long, Z_df_long[,2])
+SSC_df_date_long <- as.data.frame(cbind(Date_Time_comb, SSC_df_long, Z_df_long[,2]))
 
 colnames(SSC_df_date_long) <- c("Date", "bin", "SSC", "Z")
 
 
 ##Creating plots...
 
-palette <- colorRampPalette(c("black", "blue", "lightblue1", "green", "yellow", "red", "darkred"))
+palette <- colorRampPalette(c("black", "blue", "lightblue1", "green", "yellow", "orange", "red", "darkred"))
 
-SSC_plot = plot_ly(data = SSC_df_date_long, x = ~Date, y = ~Z, color = ~SSC, colors = palette(nrow(SSC_df_date_long)), type = 'histogram')
+SSC_plot = plot_ly(data = SSC_df_date_long, type = 'scattergl', x = ~Date, y = ~Z, color = ~SSC, mode = 'markers', colors = palette(nrow(SSC_df_date_long)), )
 
 SSC_plot
+
+
+
 
 
