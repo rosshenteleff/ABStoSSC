@@ -336,13 +336,11 @@ for(row in 1:nrow(SSC_df_date_long)){
 
 ##Creating plots...
 
-palette <- colorRampPalette(c("black", "blue", "lightblue1", "green", "yellow", "orange", "red", "darkred"))
+palette <- colorRampPalette(c("black", "blue", "lightblue1", "lightblue2", "green", "yellow", "orange", "red", "darkred"))
 
 SSC_plot = plot_ly(data = SSC_df_date_long, type = 'heatmap', x = ~Date, y = ~Z, z = ~SSC, colors = palette(nrow(SSC_df_date_long)))
 
 SSC_plot
-
-
 
 
 
