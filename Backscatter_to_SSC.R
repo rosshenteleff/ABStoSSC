@@ -40,6 +40,7 @@ Bin_Number = 20          ##(count)
 Salinity = 30            ##(ppt)
 Freq = 2                 ##(MHz)
 Noise_Floor = 13         ##(counts)
+Max_Depth = 2.879        ##(m)
 
 
 ##Extracting depth values from SEN file...
@@ -323,16 +324,21 @@ SSC_df <- as.data.frame(SSC_Matrix)
 Z_df <- as.data.frame(Z_Matrix1)
 SSC_df_long <- gather(SSC_df, value = "SSC", key = "bin")
 Z_df_long <- gather(Z_df, value = "Z", key = "Z")
-SSC_df_date_long <- as.data.frame(cbind(Date_Time_comb, SSC_df_long, Z_df_long[,2]))
+SSC_df_date_long <- as.data.frame(cbind(Date_Time_comb, SSC_df_long, Depth, Z_df_long[,2]))
 
-colnames(SSC_df_date_long) <- c("Date", "bin", "SSC", "Z")
+colnames(SSC_df_date_long) <- c("Date", "bin", "SSC", "Depth", "Z")
 
+for(row in 1:nrow(SSC_df_date_long)){
+  if(SSC_df_date_long[row,"Z"] > SSC_df_date_long[row,"Depth"]){
+    SSC_df_date_long[row,"SSC"] = 0
+  }
+}
 
 ##Creating plots...
 
 palette <- colorRampPalette(c("black", "blue", "lightblue1", "green", "yellow", "orange", "red", "darkred"))
 
-SSC_plot = plot_ly(data = SSC_df_date_long, type = 'scattergl', x = ~Date, y = ~Z, color = ~SSC, mode = 'markers', colors = palette(nrow(SSC_df_date_long)), )
+SSC_plot = plot_ly(data = SSC_df_date_long, type = 'heatmap', x = ~Date, y = ~Z, z = ~SSC, colors = palette(nrow(SSC_df_date_long)))
 
 SSC_plot
 
